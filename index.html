@@ -1,0 +1,1154 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dockz — Your phone, on the wall.</title>
+<meta name="description" content="Dockz makes 3D-printed MagSafe-compatible wall docks. Suction-mount to any wall, snap your phone on, and watch TV, sports and tutorials hands-free. No drilling, no adhesive, no mess. Designed and printed in-house in the UK.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0a0a0d;
+    --bg-2:#101014;
+    --bg-3:#16161c;
+    --line:rgba(255,255,255,.08);
+    --line-2:rgba(255,255,255,.14);
+    --ink:#f4f4f6;
+    --ink-2:#a3a3ad;
+    --ink-3:#6b6b76;
+    --accent:#63e6ff;
+    --accent-2:#8b7bff;
+    --accent-ink:#062a33;
+    --good:#4ade80;
+    --radius:20px;
+    --font-d:'Space Grotesk',sans-serif;
+    --font-b:'Inter',sans-serif;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    background:var(--bg);color:var(--ink);
+    font-family:var(--font-b);font-size:16px;line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+  }
+  ::selection{background:var(--accent);color:var(--accent-ink)}
+  h1,h2,h3,h4{font-family:var(--font-d);line-height:1.08;font-weight:700;letter-spacing:-.02em}
+  a{color:inherit;text-decoration:none}
+  img,svg{display:block;max-width:100%}
+  button{font-family:inherit;cursor:pointer}
+
+  .wrap{max-width:1200px;margin:0 auto;padding:0 24px}
+
+  /* ---------- nav ---------- */
+  .nav{
+    position:fixed;top:0;left:0;right:0;z-index:100;
+    backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+    background:rgba(10,10,13,.72);
+    border-bottom:1px solid var(--line);
+  }
+  .nav-in{max-width:1200px;margin:0 auto;padding:0 24px;height:68px;display:flex;align-items:center;gap:32px}
+  .nav-logo{display:flex;align-items:center;gap:10px;flex-shrink:0}
+  .nav-links{display:flex;gap:26px;margin-left:auto;align-items:center}
+  .nav-links a{font-size:14px;font-weight:500;color:var(--ink-2);transition:color .2s}
+  .nav-links a:hover,.nav-links a.active{color:var(--ink)}
+  .nav-cart{
+    position:relative;display:flex;align-items:center;gap:8px;
+    border:1px solid var(--line-2);border-radius:100px;padding:8px 16px;
+    font-size:14px;font-weight:600;color:var(--ink);background:transparent;
+    transition:border-color .2s, background .2s;
+  }
+  .nav-cart:hover{border-color:var(--accent);background:rgba(99,230,255,.06)}
+  .cart-badge{
+    background:var(--accent);color:var(--accent-ink);
+    font-size:11px;font-weight:700;min-width:18px;height:18px;border-radius:9px;
+    display:inline-flex;align-items:center;justify-content:center;padding:0 5px;
+  }
+  .burger{display:none;background:none;border:none;color:var(--ink);margin-left:auto}
+  @media(max-width:760px){
+    .nav-links{
+      display:none;position:fixed;top:68px;left:0;right:0;
+      background:rgba(10,10,13,.97);border-bottom:1px solid var(--line);
+      flex-direction:column;padding:20px 24px;gap:18px;align-items:flex-start;margin-left:0;
+    }
+    .nav-links.open{display:flex}
+    .burger{display:block}
+    .nav-cart-wrap{margin-left:auto}
+  }
+
+  /* ---------- shared ---------- */
+  main{padding-top:68px;min-height:calc(100vh - 68px)}
+  .page{animation:pagein .45s cubic-bezier(.16,1,.3,1)}
+  @keyframes pagein{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+  .eyebrow{
+    display:inline-flex;align-items:center;gap:8px;
+    font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;
+    color:var(--accent);
+  }
+  .eyebrow::before{content:"";width:22px;height:1px;background:var(--accent)}
+  .btn{
+    display:inline-flex;align-items:center;justify-content:center;gap:10px;
+    font-family:var(--font-d);font-weight:600;font-size:15px;
+    padding:15px 30px;border-radius:100px;border:none;
+    transition:transform .18s, box-shadow .18s, background .18s, border-color .18s, opacity .18s;
+  }
+  .btn-primary{
+    background:linear-gradient(120deg,var(--accent),#37c8e8);color:var(--accent-ink);
+    box-shadow:0 8px 30px rgba(99,230,255,.22);
+  }
+  .btn-primary:hover{transform:translateY(-2px);box-shadow:0 12px 38px rgba(99,230,255,.32)}
+  .btn-ghost{background:transparent;color:var(--ink);border:1px solid var(--line-2)}
+  .btn-ghost:hover{border-color:var(--ink-2);transform:translateY(-2px)}
+  .btn[disabled]{opacity:.45;cursor:not-allowed;transform:none!important;box-shadow:none}
+  .btn-sm{padding:11px 22px;font-size:14px}
+  .pill{
+    display:inline-block;font-size:11.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
+    padding:5px 12px;border-radius:100px;
+  }
+  .pill-soon{background:rgba(139,123,255,.15);color:#b3a7ff;border:1px solid rgba(139,123,255,.35)}
+  .pill-stock{background:rgba(74,222,128,.12);color:var(--good);border:1px solid rgba(74,222,128,.3)}
+  .section{padding:110px 0}
+  .section-head{max-width:640px;margin-bottom:56px}
+  .section-head h2{font-size:clamp(30px,4.4vw,46px);margin:14px 0 16px}
+  .section-head p{color:var(--ink-2);font-size:17px}
+
+  /* ---------- hero ---------- */
+  .hero{position:relative;overflow:hidden}
+  .hero-glow{
+    position:absolute;inset:0;pointer-events:none;
+    background:
+      radial-gradient(60% 55% at 72% 42%, rgba(99,230,255,.13), transparent 62%),
+      radial-gradient(45% 45% at 22% 80%, rgba(139,123,255,.10), transparent 65%);
+  }
+  .hero-grid-bg{
+    position:absolute;inset:0;pointer-events:none;opacity:.5;
+    background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);
+    background-size:56px 56px;
+    mask-image:radial-gradient(70% 60% at 50% 40%,black,transparent);
+    -webkit-mask-image:radial-gradient(70% 60% at 50% 40%,black,transparent);
+  }
+  .hero-in{
+    position:relative;max-width:1200px;margin:0 auto;padding:80px 24px 90px;
+    display:grid;grid-template-columns:1.05fr .95fr;gap:40px;align-items:center;min-height:calc(100vh - 68px);
+  }
+  .hero h1{font-size:clamp(42px,6.2vw,78px);margin:20px 0 22px}
+  .hero h1 .grad{
+    background:linear-gradient(100deg,var(--accent) 10%,var(--accent-2) 90%);
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+  }
+  .hero-sub{color:var(--ink-2);font-size:18px;max-width:480px;margin-bottom:36px}
+  .hero-ctas{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:44px}
+  .hero-stats{display:flex;gap:36px;flex-wrap:wrap}
+  .hero-stat b{font-family:var(--font-d);font-size:22px;display:block;letter-spacing:-.01em}
+  .hero-stat span{font-size:13px;color:var(--ink-3)}
+  .hero-visual{position:relative;display:flex;justify-content:center}
+  .hero-visual .float{animation:float 5.5s ease-in-out infinite}
+  @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-16px)}}
+  .hero-ring{
+    position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+    width:420px;height:420px;border-radius:50%;
+    border:1px solid rgba(99,230,255,.18);
+    animation:ringpulse 4s ease-in-out infinite;
+  }
+  .hero-ring.r2{width:540px;height:540px;animation-delay:1.2s;border-color:rgba(139,123,255,.12)}
+  @keyframes ringpulse{0%,100%{opacity:.5;transform:translate(-50%,-50%) scale(.97)}50%{opacity:1;transform:translate(-50%,-50%) scale(1.03)}}
+  @media(max-width:900px){
+    .hero-in{grid-template-columns:1fr;padding-top:56px;min-height:0;text-align:left}
+    .hero-visual{order:-1}
+    .hero-visual svg{width:min(72vw,340px);height:auto}
+    .hero-ring{width:300px;height:300px}.hero-ring.r2{width:380px;height:380px}
+  }
+
+  /* ---------- marquee ---------- */
+  .marquee{border-top:1px solid var(--line);border-bottom:1px solid var(--line);overflow:hidden;padding:18px 0;background:var(--bg-2)}
+  .marquee-track{display:flex;gap:56px;width:max-content;animation:marq 26s linear infinite}
+  .marquee-track span{font-family:var(--font-d);font-weight:600;font-size:14px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3);display:flex;align-items:center;gap:56px;white-space:nowrap}
+  .marquee-track span i{font-style:normal;color:var(--accent)}
+  @keyframes marq{to{transform:translateX(-50%)}}
+
+  /* ---------- problem ---------- */
+  .problem-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+  .p-card{
+    background:var(--bg-2);border:1px solid var(--line);border-radius:var(--radius);
+    padding:34px 30px;transition:transform .25s, border-color .25s;
+  }
+  .p-card:hover{transform:translateY(-4px);border-color:var(--line-2)}
+  .p-card .num{font-family:var(--font-d);font-size:13px;font-weight:600;color:var(--accent);letter-spacing:.1em}
+  .p-card h3{font-size:20px;margin:14px 0 10px}
+  .p-card p{color:var(--ink-2);font-size:15px}
+  @media(max-width:820px){.problem-grid{grid-template-columns:1fr}}
+
+  /* ---------- product cards ---------- */
+  .prod-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+  .prod-card{
+    position:relative;background:var(--bg-2);border:1px solid var(--line);border-radius:calc(var(--radius) + 6px);
+    overflow:hidden;transition:transform .3s, border-color .3s, box-shadow .3s;display:block;
+  }
+  .prod-card:hover{transform:translateY(-6px);border-color:rgba(99,230,255,.35);box-shadow:0 24px 60px rgba(0,0,0,.45)}
+  .prod-card-img{
+    background:
+      radial-gradient(70% 65% at 50% 42%, rgba(99,230,255,.09), transparent 70%),
+      linear-gradient(180deg,var(--bg-3),var(--bg-2));
+    display:flex;align-items:center;justify-content:center;padding:44px 20px 28px;
+    border-bottom:1px solid var(--line);
+  }
+  .prod-card-img svg{width:min(64%,260px);height:auto;transition:transform .35s}
+  .prod-card:hover .prod-card-img svg{transform:scale(1.05) rotate(-1.5deg)}
+  .prod-card-body{padding:26px 28px 30px}
+  .prod-card-body h3{font-size:24px;margin:10px 0 8px}
+  .prod-card-body p{color:var(--ink-2);font-size:15px;margin-bottom:18px}
+  .prod-price{font-family:var(--font-d);font-size:20px;font-weight:700}
+  .prod-price small{font-size:13px;color:var(--ink-3);font-weight:500;margin-left:6px}
+  .prod-card-foot{display:flex;align-items:center;justify-content:space-between;gap:12px}
+  .prod-link{font-size:14px;font-weight:600;color:var(--accent);display:inline-flex;align-items:center;gap:6px}
+  @media(max-width:820px){.prod-grid{grid-template-columns:1fr}}
+
+  /* ---------- colours ---------- */
+  .colour-row{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+  .c-card{background:var(--bg-2);border:1px solid var(--line);border-radius:var(--radius);padding:30px;text-align:center;transition:transform .25s,border-color .25s}
+  .c-card:hover{transform:translateY(-4px);border-color:var(--line-2)}
+  .c-swatch{width:74px;height:74px;border-radius:50%;margin:0 auto 18px;border:1px solid var(--line-2);box-shadow:inset -8px -10px 20px rgba(0,0,0,.35), inset 6px 8px 16px rgba(255,255,255,.09)}
+  .c-card h4{font-size:17px}
+  .c-card p{font-size:13.5px;color:var(--ink-3);margin-top:6px}
+  @media(max-width:820px){.colour-row{grid-template-columns:1fr}}
+
+  /* ---------- steps ---------- */
+  .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;counter-reset:step}
+  .step{background:var(--bg-2);border:1px solid var(--line);border-radius:var(--radius);padding:36px 30px;position:relative;overflow:hidden}
+  .step::before{
+    counter-increment:step;content:"0" counter(step);
+    position:absolute;top:14px;right:20px;
+    font-family:var(--font-d);font-size:64px;font-weight:700;color:rgba(255,255,255,.05);line-height:1;
+  }
+  .step .step-ico{width:52px;height:52px;border-radius:14px;background:rgba(99,230,255,.09);border:1px solid rgba(99,230,255,.22);display:flex;align-items:center;justify-content:center;margin-bottom:20px}
+  .step h3{font-size:19px;margin-bottom:10px}
+  .step p{color:var(--ink-2);font-size:15px}
+  @media(max-width:820px){.steps{grid-template-columns:1fr}}
+
+  /* ---------- CTA band ---------- */
+  .cta-band{
+    position:relative;border:1px solid var(--line);border-radius:calc(var(--radius) + 8px);overflow:hidden;
+    padding:70px 40px;text-align:center;background:var(--bg-2);
+  }
+  .cta-band::before{
+    content:"";position:absolute;inset:0;
+    background:radial-gradient(55% 90% at 50% 0%, rgba(99,230,255,.14), transparent 70%);
+  }
+  .cta-band>*{position:relative}
+  .cta-band h2{font-size:clamp(28px,4vw,42px);margin-bottom:14px}
+  .cta-band p{color:var(--ink-2);margin-bottom:30px}
+
+  /* ---------- product detail page ---------- */
+  .pdp{display:grid;grid-template-columns:1.05fr .95fr;gap:56px;padding:70px 0 40px;align-items:start}
+  .pdp-img{
+    position:sticky;top:100px;
+    background:
+      radial-gradient(65% 60% at 50% 42%, rgba(99,230,255,.1), transparent 70%),
+      linear-gradient(180deg,var(--bg-3),var(--bg-2));
+    border:1px solid var(--line);border-radius:calc(var(--radius) + 6px);
+    display:flex;align-items:center;justify-content:center;padding:56px 32px;min-height:460px;
+  }
+  .pdp-img svg{width:min(78%,360px);height:auto}
+  .pdp-info .crumb{font-size:13px;color:var(--ink-3);margin-bottom:18px;display:block}
+  .pdp-info .crumb a{color:var(--ink-2)}
+  .pdp-info h1{font-size:clamp(34px,4.6vw,52px);margin:10px 0 12px}
+  .pdp-price{font-family:var(--font-d);font-size:28px;font-weight:700;margin:6px 0 20px}
+  .pdp-price small{font-size:14px;color:var(--ink-3);font-weight:500;margin-left:8px}
+  .pdp-desc{color:var(--ink-2);font-size:16px;margin-bottom:30px;max-width:460px}
+  .opt-label{font-size:13px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3);margin-bottom:12px;display:block}
+  .swatches{display:flex;gap:12px;margin-bottom:30px}
+  .swatch{
+    width:46px;height:46px;border-radius:50%;cursor:pointer;border:2px solid transparent;
+    outline:1px solid var(--line-2);outline-offset:3px;transition:outline-color .2s, transform .2s;
+    box-shadow:inset -5px -6px 12px rgba(0,0,0,.35), inset 4px 5px 10px rgba(255,255,255,.09);
+  }
+  .swatch:hover{transform:scale(1.08)}
+  .swatch.sel{outline:2px solid var(--accent)}
+  .qty-row{display:flex;gap:14px;align-items:center;margin-bottom:26px}
+  .qty{
+    display:inline-flex;align-items:center;border:1px solid var(--line-2);border-radius:100px;overflow:hidden;
+  }
+  .qty button{background:none;border:none;color:var(--ink);width:42px;height:46px;font-size:18px}
+  .qty button:hover{background:rgba(255,255,255,.06)}
+  .qty span{min-width:36px;text-align:center;font-weight:600;font-family:var(--font-d)}
+  .pdp-cta-row{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:34px}
+  .pdp-cta-row .btn{flex:1;min-width:200px}
+  .spec-list{border-top:1px solid var(--line)}
+  .spec-list dl{display:flex;justify-content:space-between;gap:20px;padding:15px 0;border-bottom:1px solid var(--line);font-size:14.5px}
+  .spec-list dt{color:var(--ink-3)}
+  .spec-list dd{color:var(--ink);text-align:right;font-weight:500}
+  .feat-strip{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;padding:40px 0 90px}
+  .feat{background:var(--bg-2);border:1px solid var(--line);border-radius:var(--radius);padding:26px}
+  .feat h4{font-size:16px;margin-bottom:8px}
+  .feat p{font-size:14px;color:var(--ink-2)}
+  @media(max-width:900px){
+    .pdp{grid-template-columns:1fr;gap:32px}
+    .pdp-img{position:static;min-height:340px}
+    .feat-strip{grid-template-columns:1fr}
+  }
+
+  /* ---------- how it works page ---------- */
+  .hiw-hero{padding:80px 0 30px}
+  .hiw-hero h1{font-size:clamp(36px,5vw,58px);margin:16px 0 18px}
+  .hiw-hero p{color:var(--ink-2);max-width:560px;font-size:17px}
+  .hiw-detail{display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:center;padding:34px 0}
+  .hiw-detail:nth-child(even) .hiw-txt{order:-1}
+  .hiw-visual{
+    background:linear-gradient(180deg,var(--bg-3),var(--bg-2));border:1px solid var(--line);
+    border-radius:var(--radius);display:flex;align-items:center;justify-content:center;padding:44px;min-height:300px;
+  }
+  .hiw-visual svg{width:min(65%,240px);height:auto}
+  .hiw-txt h3{font-size:26px;margin:12px 0 12px}
+  .hiw-txt p{color:var(--ink-2);max-width:420px}
+  @media(max-width:820px){
+    .hiw-detail{grid-template-columns:1fr}
+    .hiw-detail:nth-child(even) .hiw-txt{order:0}
+  }
+  .faq{max-width:760px}
+  .faq-item{border-bottom:1px solid var(--line)}
+  .faq-item summary{
+    cursor:pointer;list-style:none;display:flex;justify-content:space-between;align-items:center;gap:16px;
+    padding:22px 0;font-family:var(--font-d);font-weight:600;font-size:17px;
+  }
+  .faq-item summary::-webkit-details-marker{display:none}
+  .faq-item summary::after{content:"+";font-size:22px;color:var(--accent);transition:transform .25s}
+  .faq-item[open] summary::after{transform:rotate(45deg)}
+  .faq-item p{color:var(--ink-2);padding:0 0 22px;max-width:640px}
+
+  /* ---------- contact ---------- */
+  .contact-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;padding:70px 0 100px;align-items:start}
+  .contact-card{background:var(--bg-2);border:1px solid var(--line);border-radius:var(--radius);padding:38px}
+  .contact-card h3{font-size:22px;margin-bottom:12px}
+  .contact-card p{color:var(--ink-2);font-size:15px;margin-bottom:20px}
+  .contact-line{display:flex;align-items:center;gap:12px;padding:14px 0;border-top:1px solid var(--line);font-size:15px}
+  .contact-line b{font-weight:600}
+  .field{margin-bottom:18px}
+  .field label{display:block;font-size:13px;font-weight:600;color:var(--ink-2);margin-bottom:8px}
+  .field input,.field textarea,.field select{
+    width:100%;background:var(--bg-3);border:1px solid var(--line-2);border-radius:12px;
+    color:var(--ink);padding:13px 16px;font-family:inherit;font-size:15px;outline:none;transition:border-color .2s;
+  }
+  .field input:focus,.field textarea:focus{border-color:var(--accent)}
+  .field textarea{min-height:130px;resize:vertical}
+  @media(max-width:820px){.contact-grid{grid-template-columns:1fr}}
+
+  /* ---------- cart ---------- */
+  .cart-page{max-width:900px;margin:0 auto;padding:70px 24px 100px}
+  .cart-page h1{font-size:clamp(32px,4.5vw,46px);margin:14px 0 34px}
+  .cart-item{
+    display:grid;grid-template-columns:96px 1fr auto;gap:20px;align-items:center;
+    background:var(--bg-2);border:1px solid var(--line);border-radius:var(--radius);padding:18px 22px;margin-bottom:14px;
+  }
+  .cart-item-img{background:var(--bg-3);border-radius:14px;padding:10px;display:flex;align-items:center;justify-content:center}
+  .cart-item-img svg{width:64px;height:auto}
+  .cart-item h4{font-family:var(--font-d);font-size:17px}
+  .cart-item .meta{font-size:13px;color:var(--ink-3);margin-top:3px}
+  .cart-item-right{display:flex;align-items:center;gap:18px}
+  .cart-item .line-price{font-family:var(--font-d);font-weight:700;font-size:17px;min-width:70px;text-align:right}
+  .remove-btn{background:none;border:none;color:var(--ink-3);font-size:13px;text-decoration:underline;transition:color .2s}
+  .remove-btn:hover{color:#ff8b8b}
+  .cart-summary{background:var(--bg-2);border:1px solid var(--line);border-radius:var(--radius);padding:28px;margin-top:26px}
+  .sum-row{display:flex;justify-content:space-between;padding:9px 0;font-size:15px;color:var(--ink-2)}
+  .sum-row.total{border-top:1px solid var(--line);margin-top:10px;padding-top:16px;color:var(--ink);font-family:var(--font-d);font-weight:700;font-size:20px}
+  .cart-empty{text-align:center;padding:70px 20px}
+  .cart-empty .big{font-size:56px;margin-bottom:16px}
+  .cart-empty p{color:var(--ink-2);margin-bottom:26px}
+  @media(max-width:640px){
+    .cart-item{grid-template-columns:72px 1fr}
+    .cart-item-right{grid-column:1/-1;justify-content:space-between}
+  }
+
+  /* ---------- checkout ---------- */
+  .checkout-note{
+    background:rgba(139,123,255,.08);border:1px solid rgba(139,123,255,.3);border-radius:14px;
+    padding:16px 20px;font-size:14px;color:#c9c2ff;margin-bottom:28px;display:flex;gap:12px;align-items:flex-start;
+  }
+  .co-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:24px;align-items:start}
+  @media(max-width:820px){.co-grid{grid-template-columns:1fr}}
+
+  /* ---------- toast ---------- */
+  .toast{
+    position:fixed;bottom:28px;left:50%;transform:translate(-50%,20px);z-index:200;
+    background:var(--bg-3);border:1px solid rgba(99,230,255,.4);color:var(--ink);
+    padding:14px 24px;border-radius:100px;font-size:14px;font-weight:500;
+    opacity:0;pointer-events:none;transition:opacity .3s, transform .3s;
+    box-shadow:0 12px 40px rgba(0,0,0,.5);display:flex;gap:10px;align-items:center;
+  }
+  .toast.show{opacity:1;transform:translate(-50%,0)}
+  .toast .dot{width:8px;height:8px;border-radius:50%;background:var(--good)}
+
+  /* ---------- footer ---------- */
+  footer{border-top:1px solid var(--line);background:var(--bg-2);padding:60px 0 40px;margin-top:40px}
+  .foot-grid{display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:32px;margin-bottom:44px}
+  .foot-grid p{color:var(--ink-3);font-size:14px;max-width:280px;margin-top:14px}
+  .foot-grid h5{font-family:var(--font-d);font-size:13px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-2);margin-bottom:16px}
+  .foot-grid ul{list-style:none}
+  .foot-grid li{margin-bottom:10px}
+  .foot-grid li a{font-size:14px;color:var(--ink-3);transition:color .2s}
+  .foot-grid li a:hover{color:var(--ink)}
+  .foot-base{border-top:1px solid var(--line);padding-top:24px;display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;font-size:13px;color:var(--ink-3)}
+  @media(max-width:820px){.foot-grid{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+
+<div class="toast" id="toast"><span class="dot"></span><span id="toast-msg"></span></div>
+
+<nav class="nav">
+  <div class="nav-in">
+    <a href="#/" class="nav-logo" aria-label="Dockz home">
+      <svg width="34" height="34" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="lgn" x1="4" y1="4" x2="28" y2="28">
+            <stop offset="0" stop-color="#63e6ff"/><stop offset="1" stop-color="#8b7bff"/>
+          </linearGradient>
+        </defs>
+        <circle cx="16" cy="12" r="7.5" stroke="url(#lgn)" stroke-width="3.4"/>
+        <rect x="14.3" y="19" width="3.4" height="6.5" rx="1.2" fill="url(#lgn)"/>
+        <rect x="7.5" y="26" width="17" height="3.2" rx="1.6" fill="url(#lgn)"/>
+      </svg>
+      <span style="font-family:var(--font-d);font-weight:700;font-size:21px;letter-spacing:.04em">DOCKZ</span>
+    </a>
+    <div class="nav-links" id="nav-links">
+      <a href="#/" data-nav="home">Home</a>
+      <a href="#/classic" data-nav="classic">Dockz Classic</a>
+      <a href="#/pro" data-nav="pro">Dockz Pro</a>
+      <a href="#/how" data-nav="how">How it works</a>
+      <a href="#/contact" data-nav="contact">Contact</a>
+    </div>
+    <div class="nav-cart-wrap" style="display:flex;align-items:center;gap:10px;margin-left:16px">
+      <a href="#/cart" class="nav-cart">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+        Cart <span class="cart-badge" id="cart-badge">0</span>
+      </a>
+      <button class="burger" id="burger" aria-label="Menu">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="7" x2="21" y2="7"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="17" x2="21" y2="17"/></svg>
+      </button>
+    </div>
+  </div>
+</nav>
+
+<main id="app"></main>
+
+<footer>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div>
+        <a href="#/" class="nav-logo" aria-label="Dockz home">
+          <svg width="30" height="30" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="lgf" x1="4" y1="4" x2="28" y2="28">
+                <stop offset="0" stop-color="#63e6ff"/><stop offset="1" stop-color="#8b7bff"/>
+              </linearGradient>
+            </defs>
+            <circle cx="16" cy="12" r="7.5" stroke="url(#lgf)" stroke-width="3.4"/>
+            <rect x="14.3" y="19" width="3.4" height="6.5" rx="1.2" fill="url(#lgf)"/>
+            <rect x="7.5" y="26" width="17" height="3.2" rx="1.6" fill="url(#lgf)"/>
+          </svg>
+          <span style="font-family:var(--font-d);font-weight:700;font-size:18px;letter-spacing:.04em">DOCKZ</span>
+        </a>
+        <p>3D-printed MagSafe-compatible wall docks. Snap your phone to any wall and watch hands-free. Designed and printed in-house in the UK — no drilling, no residue, no mess.</p>
+      </div>
+      <div>
+        <h5>Shop</h5>
+        <ul>
+          <li><a href="#/classic">Dockz Classic — £21</a></li>
+          <li><a href="#/pro">Dockz Pro — £30</a></li>
+          <li><a href="#/cart">Your cart</a></li>
+        </ul>
+      </div>
+      <div>
+        <h5>Learn</h5>
+        <ul>
+          <li><a href="#/how">How it works</a></li>
+          <li><a href="#/how">FAQ</a></li>
+        </ul>
+      </div>
+      <div>
+        <h5>Get in touch</h5>
+        <ul>
+          <li><a href="mailto:dockzofficial@gmail.com">dockzofficial@gmail.com</a></li>
+          <li><a href="#/contact">Contact page</a></li>
+          <li><a href="https://www.etsy.com" target="_blank" rel="noopener">Find us on Etsy</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="foot-base">
+      <span>© 2026 Dockz · dockz.co.uk</span>
+      <span>Designed &amp; 3D-printed in-house 🇬🇧</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+/* ============================================================
+   DOCKZ — single-file storefront
+   Pages are rendered client-side via hash routing (#/route).
+   Cart persists in localStorage. Checkout hands off to Stripe
+   Checkout via /api/create-checkout-session (Vercel Function) —
+   prices are validated server-side, never trusted from here.
+============================================================ */
+
+/* ---------- finishes & products ---------- */
+const FINISH = {
+  white: { label:'Matte White', top:'#f4f4f7', mid:'#d9d9df', low:'#a9a9b3', ring:'#c9c9d1', swatch:'#e8e8ec' },
+  black: { label:'Matte Black', top:'#3d3d45', mid:'#26262c', low:'#131317', ring:'#50505a', swatch:'#26262b' },
+  grey:  { label:'Matte Grey',  top:'#b0b0b8', mid:'#87878f', low:'#5a5a62', ring:'#9b9ba3', swatch:'#8d8d94' },
+};
+
+const PRODUCTS = {
+  classic: {
+    id:'classic', name:'Dockz Classic', price:21, soon:false,
+    tagline:'The everyday wall dock',
+    blurb:'Suction-mount MagSafe-compatible wall dock. Stick it to your kitchen tiles, bathroom mirror, wardrobe door or gym wall — snap your phone on at eye level and watch hands-free.',
+    specs:[
+      ['Mount','High-grip suction cup — any smooth wall or vertical surface'],
+      ['Hold','MagSafe-compatible magnetic ring'],
+      ['Viewing','Portrait or landscape — rotates on the ring'],
+      ['Compatibility','iPhone 12 & later · Samsung with magnetic case/ring'],
+      ['Material','PLA+, 3D-printed in-house'],
+      ['Finishes','Matte White · Matte Black · Matte Grey'],
+      ['Installation','None. Press on, flick the lever, done.'],
+    ],
+  },
+  pro: {
+    id:'pro', name:'Dockz Pro', price:30, soon:true,
+    tagline:'Hangs and charges',
+    blurb:'Everything the Classic does, with a built-in wireless charging system. Your phone charges on the wall while you watch — one spot to hang and power up.',
+    specs:[
+      ['Mount','High-grip suction cup — any smooth wall or vertical surface'],
+      ['Hold','MagSafe-compatible magnetic ring'],
+      ['Charging','Built-in wireless charging system'],
+      ['Viewing','Portrait or landscape — rotates on the ring'],
+      ['Compatibility','iPhone 12 & later · Samsung with magnetic case/ring'],
+      ['Material','PLA+, 3D-printed in-house'],
+      ['Finishes','Matte White · Matte Black · Matte Grey'],
+    ],
+  },
+};
+
+/* ---------- product render (placeholder art) ---------- */
+function dockSVG(colour, opts={}){
+  const { phone=false, pro=false, uid='u'+Math.random().toString(36).slice(2,7), glow=false } = opts;
+  const f = FINISH[colour] || FINISH.black;
+  const id = s => uid + '-' + s;
+  let inner = '';
+
+  /* the wall (tiles) */
+  inner += `
+    <rect x="0" y="0" width="400" height="430" rx="26" fill="url(#${id('wal')})"/>
+    <g stroke="rgba(255,255,255,.05)" stroke-width="1.5">
+      <line x1="0" y1="118" x2="400" y2="118"/><line x1="0" y1="292" x2="400" y2="292"/>
+      <line x1="88" y1="0" x2="88" y2="430"/><line x1="312" y1="0" x2="312" y2="430"/>
+    </g>`;
+
+  if (glow) inner += `<circle cx="200" cy="195" r="150" fill="url(#${id('glo')})"/>`;
+
+  /* soft cast shadow on the wall */
+  inner += `<ellipse cx="208" cy="210" rx="132" ry="120" fill="url(#${id('sha')})"/>`;
+
+  /* suction plate pressed against the wall (seen head-on) */
+  inner += `
+    <rect x="294" y="174" width="34" height="30" rx="11" fill="${f.low}"/>
+    <circle cx="200" cy="190" r="104" fill="url(#${id('plt')})"/>
+    <circle cx="200" cy="190" r="97" fill="none" stroke="rgba(255,255,255,.07)" stroke-width="2"/>
+    <circle cx="200" cy="190" r="87" fill="rgba(0,0,0,.32)"/>`;
+
+  if (phone){
+    /* phone hanging on the wall, landscape, mid-watch */
+    inner += `
+    <g transform="rotate(-2 200 190)">
+      <rect x="35" y="107" width="330" height="166" rx="28" fill="url(#${id('phb')})" stroke="rgba(255,255,255,.15)" stroke-width="1.5"/>
+      <rect x="43" y="115" width="314" height="150" rx="21" fill="url(#${id('scr')})"/>
+      <path d="M43 115 L168 115 L96 265 L43 265 Z" fill="#fff" opacity=".04"/>
+      <rect x="54" y="174" width="12" height="32" rx="6" fill="#050507"/>
+      <rect x="62" y="129" width="58" height="21" rx="10.5" fill="rgba(0,0,0,.5)"/>
+      <circle cx="75" cy="139.5" r="4" fill="#ff5b5b"/>
+      <text x="101" y="144" text-anchor="middle" font-family="'Inter',sans-serif" font-weight="700" font-size="11" letter-spacing="1.5" fill="#fff">LIVE</text>
+      <circle cx="204" cy="184" r="31" fill="rgba(255,255,255,.1)" stroke="rgba(255,255,255,.55)" stroke-width="2"/>
+      <path d="M196 168 L221 184 L196 200 Z" fill="#f4f4f6"/>
+      <rect x="60" y="247" width="282" height="4.5" rx="2.25" fill="rgba(255,255,255,.18)"/>
+      <rect x="60" y="247" width="152" height="4.5" rx="2.25" fill="#63e6ff"/>
+      <circle cx="212" cy="249" r="6" fill="#fff"/>
+    </g>`;
+  } else {
+    /* bare dock head */
+    inner += `
+    <circle cx="200" cy="190" r="82" fill="url(#${id('hed')})" stroke="rgba(255,255,255,.10)" stroke-width="1.5"/>
+    <circle cx="200" cy="190" r="57" stroke="rgba(0,0,0,.28)" stroke-width="13" fill="none"/>
+    <circle cx="200" cy="190" r="57" stroke="${f.ring}" stroke-width="8" fill="none"/>
+    <path d="M138 146 A76 76 0 0 1 262 146" stroke="rgba(255,255,255,.22)" stroke-width="4" fill="none" stroke-linecap="round"/>`;
+    if (pro){
+      inner += `
+      <circle cx="200" cy="190" r="38" stroke="rgba(99,230,255,.45)" stroke-width="2.5" fill="none" stroke-dasharray="5 8" stroke-linecap="round"/>
+      <path d="M206 164 L186 194 L198 194 L194 216 L214 186 L202 186 Z" fill="#63e6ff"/>`;
+    } else {
+      inner += `<circle cx="200" cy="190" r="8" fill="${f.low}"/>`;
+    }
+  }
+
+  return `
+  <svg viewBox="0 0 400 430" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Dockz wall dock — ${f.label}">
+    <defs>
+      <linearGradient id="${id('wal')}" x1="0" y1="0" x2="0" y2="430">
+        <stop offset="0" stop-color="#1e1e26"/><stop offset="1" stop-color="#121218"/>
+      </linearGradient>
+      <radialGradient id="${id('sha')}" cx=".5" cy=".5" r=".5">
+        <stop offset="0" stop-color="rgba(0,0,0,.5)"/><stop offset=".7" stop-color="rgba(0,0,0,.28)"/><stop offset="1" stop-color="rgba(0,0,0,0)"/>
+      </radialGradient>
+      <linearGradient id="${id('plt')}" x1="110" y1="100" x2="290" y2="290">
+        <stop offset="0" stop-color="${f.mid}"/><stop offset="1" stop-color="${f.low}"/>
+      </linearGradient>
+      <linearGradient id="${id('hed')}" x1="130" y1="120" x2="270" y2="270">
+        <stop offset="0" stop-color="${f.top}"/><stop offset=".55" stop-color="${f.mid}"/><stop offset="1" stop-color="${f.low}"/>
+      </linearGradient>
+      <linearGradient id="${id('phb')}" x1="35" y1="107" x2="365" y2="273">
+        <stop offset="0" stop-color="#3a3a42"/><stop offset="1" stop-color="#17171c"/>
+      </linearGradient>
+      <linearGradient id="${id('scr')}" x1="43" y1="115" x2="357" y2="265">
+        <stop offset="0" stop-color="#101623"/><stop offset="1" stop-color="#1b2438"/>
+      </linearGradient>
+      <radialGradient id="${id('glo')}" cx=".5" cy=".5" r=".5">
+        <stop offset="0" stop-color="rgba(99,230,255,.28)"/><stop offset="1" stop-color="rgba(99,230,255,0)"/>
+      </radialGradient>
+    </defs>
+    ${inner}
+  </svg>`;
+}
+
+/* ---------- cart ---------- */
+let cart = []; // {id, colour, qty}
+try {
+  const saved = JSON.parse(localStorage.getItem('dockz-cart') || '[]');
+  if (Array.isArray(saved)) cart = saved.filter(l => PRODUCTS[l.id] && FINISH[l.colour] && Number.isInteger(l.qty) && l.qty > 0);
+} catch(e) { /* fresh cart */ }
+function saveCart(){ try { localStorage.setItem('dockz-cart', JSON.stringify(cart)); } catch(e){} }
+const money = n => '£' + (Number.isInteger(n) ? n : n.toFixed(2));
+const cartCount = () => cart.reduce((s,i)=>s+i.qty,0);
+const cartTotal = () => cart.reduce((s,i)=>s + PRODUCTS[i.id].price * i.qty, 0);
+
+function addToCart(id, colour, qty=1){
+  const line = cart.find(i => i.id===id && i.colour===colour);
+  if (line) line.qty += qty; else cart.push({id, colour, qty});
+  syncBadge();
+  toast(`${PRODUCTS[id].name} (${FINISH[colour].label}) added to cart`);
+}
+function setQty(idx, d){
+  cart[idx].qty += d;
+  if (cart[idx].qty <= 0) cart.splice(idx,1);
+  syncBadge(); renderCartPage();
+}
+function removeLine(idx){ cart.splice(idx,1); syncBadge(); renderCartPage(); }
+function syncBadge(){ saveCart(); document.getElementById('cart-badge').textContent = cartCount(); }
+
+let toastTimer;
+function toast(msg){
+  const t = document.getElementById('toast');
+  document.getElementById('toast-msg').textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=>t.classList.remove('show'), 2600);
+}
+
+/* ---------- shared fragments ---------- */
+const swatchHTML = (sel) => Object.keys(FINISH).map(k =>
+  `<button class="swatch ${k===sel?'sel':''}" data-colour="${k}" title="${FINISH[k].label}" aria-label="${FINISH[k].label}" style="background:${FINISH[k].swatch}"></button>`
+).join('');
+
+const stepsHTML = `
+  <div class="steps">
+    <div class="step">
+      <div class="step-ico"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#63e6ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><rect x="4" y="19" width="16" height="2" rx="1"/></svg></div>
+      <h3>Stick it</h3>
+      <p>Press the suction cup onto any smooth wall — tiles, mirror, glass, wardrobe door, fridge — and lock the lever. It grips hard, and lifts off clean.</p>
+    </div>
+    <div class="step">
+      <div class="step-ico"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#63e6ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3"/></svg></div>
+      <h3>Snap it</h3>
+      <p>The MagSafe-compatible ring pulls your iPhone or Samsung into place with a satisfying click. Perfectly aligned, every single time.</p>
+    </div>
+    <div class="step">
+      <div class="step-ico"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#63e6ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="m17 2-5 5-5-5"/></svg></div>
+      <h3>Sit back</h3>
+      <p>Cook along to recipes, watch the match from the sofa, follow a workout at the gym mirror. Your phone hangs at eye level, hands-free, until you pull it off.</p>
+    </div>
+  </div>`;
+
+const ctaBand = `
+  <section class="section" style="padding-top:40px">
+    <div class="wrap">
+      <div class="cta-band">
+        <span class="eyebrow" style="justify-content:center">From £21</span>
+        <h2>Put your phone on the wall.</h2>
+        <p>Watch TV, sports and tutorials hands-free — no drills, no adhesives, no clamps. Three matte finishes.</p>
+        <a href="#/classic" class="btn btn-primary">Shop Dockz Classic</a>
+      </div>
+    </div>
+  </section>`;
+
+/* ---------- pages ---------- */
+function pageHome(){
+  return `
+  <div class="page">
+    <section class="hero">
+      <div class="hero-glow"></div><div class="hero-grid-bg"></div>
+      <div class="hero-in">
+        <div>
+          <span class="eyebrow">3D-printed · MagSafe-compatible · Wall-mounted</span>
+          <h1>Stick it.<br>Snap it.<br><span class="grad">Sit back.</span></h1>
+          <p class="hero-sub">The best screen you own deserves better than being propped against a mug. Dockz snaps your phone to any wall, at eye level, so you can watch TV, sports and tutorials hands-free — no drilling, no adhesive residue, no mess.</p>
+          <div class="hero-ctas">
+            <a href="#/classic" class="btn btn-primary">Shop from £21</a>
+            <a href="#/how" class="btn btn-ghost">How it works</a>
+          </div>
+          <div class="hero-stats">
+            <div class="hero-stat"><b>0</b><span>holes drilled</span></div>
+            <div class="hero-stat"><b>3</b><span>matte finishes</span></div>
+            <div class="hero-stat"><b>100%</b><span>hands-free viewing</span></div>
+          </div>
+        </div>
+        <div class="hero-visual">
+          <div class="hero-ring"></div><div class="hero-ring r2"></div>
+          <div class="float" style="width:min(100%,400px)">${dockSVG('black',{phone:true, glow:true, uid:'hero'})}</div>
+        </div>
+      </div>
+    </section>
+
+    <div class="marquee"><div class="marquee-track">
+      <span>Wall-mounted <i>·</i> MagSafe-compatible <i>·</i> No drilling <i>·</i> Watch hands-free <i>·</i> iPhone &amp; Samsung <i>·</i> From £21 <i>·</i></span>
+      <span>Wall-mounted <i>·</i> MagSafe-compatible <i>·</i> No drilling <i>·</i> Watch hands-free <i>·</i> iPhone &amp; Samsung <i>·</i> From £21 <i>·</i></span>
+    </div></div>
+
+    <section class="section">
+      <div class="wrap">
+        <div class="section-head">
+          <span class="eyebrow">Sound familiar?</span>
+          <h2>Watching anything on your phone shouldn't be a balancing act.</h2>
+          <p>It's the best screen you own — and it always ends up in the weirdest places.</p>
+        </div>
+        <div class="problem-grid">
+          <div class="p-card"><span class="num">/01</span><h3>The mug-prop masterclass</h3><p>Following a recipe or tutorial with your phone leaned against a cup — wrong angle, wrong height, one nudge from sliding into the washing-up.</p></div>
+          <div class="p-card"><span class="num">/02</span><h3>The arm-ache marathon</h3><p>Holding your phone up through a whole match, episode or workout video. Your arm taps out before half-time does.</p></div>
+          <div class="p-card"><span class="num">/03</span><h3>The mounts that fight back</h3><p>Drilled brackets that scar the wall, sticky pads that peel the paint, spring clamps that need two hands. The cure is worse than the problem.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" style="padding-top:0">
+      <div class="wrap">
+        <div class="section-head">
+          <span class="eyebrow">The line-up</span>
+          <h2>Two wall docks. One click.</h2>
+          <p>Both suction-mount to any smooth wall and hold your phone at eye level with a MagSafe-compatible magnetic ring.</p>
+        </div>
+        <div class="prod-grid">
+          <a href="#/classic" class="prod-card">
+            <div class="prod-card-img">${dockSVG('white',{uid:'hc'})}</div>
+            <div class="prod-card-body">
+              <span class="pill pill-stock">In stock</span>
+              <h3>Dockz Classic</h3>
+              <p>The everyday wall dock. Stick, snap, sit back — your phone on the wall, wherever you're watching.</p>
+              <div class="prod-card-foot">
+                <span class="prod-price">£21<small>3 finishes</small></span>
+                <span class="prod-link">View dock →</span>
+              </div>
+            </div>
+          </a>
+          <a href="#/pro" class="prod-card">
+            <div class="prod-card-img">${dockSVG('black',{pro:true, uid:'hp'})}</div>
+            <div class="prod-card-body">
+              <span class="pill pill-soon">Coming soon</span>
+              <h3>Dockz Pro</h3>
+              <p>Same grip, same snap — plus a built-in wireless charging system. It charges while you watch.</p>
+              <div class="prod-card-foot">
+                <span class="prod-price">£30<small>3 finishes</small></span>
+                <span class="prod-link">View dock →</span>
+              </div>
+            </div>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" style="padding-top:0">
+      <div class="wrap">
+        <div class="section-head">
+          <span class="eyebrow">Finishes</span>
+          <h2>Three shades of matte.</h2>
+          <p>Printed in-house in a finish that disappears into your setup — or stands out, if that's more your thing.</p>
+        </div>
+        <div class="colour-row">
+          <div class="c-card"><div class="c-swatch" style="background:${FINISH.white.swatch}"></div><h4>Matte White</h4><p>Clean. Bright. Made for kitchen and bathroom tiles.</p></div>
+          <div class="c-card"><div class="c-swatch" style="background:${FINISH.black.swatch}"></div><h4>Matte Black</h4><p>Stealth mode. Disappears on dark walls and mirrors.</p></div>
+          <div class="c-card"><div class="c-swatch" style="background:${FINISH.grey.swatch}"></div><h4>Matte Grey</h4><p>The in-between. Matches everything you own.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" style="padding-top:0">
+      <div class="wrap">
+        <div class="section-head">
+          <span class="eyebrow">How it works</span>
+          <h2>No toolbox required.</h2>
+        </div>
+        ${stepsHTML}
+        <div style="margin-top:34px"><a href="#/how" class="btn btn-ghost btn-sm">See the full breakdown</a></div>
+      </div>
+    </section>
+
+    ${ctaBand}
+  </div>`;
+}
+
+/* ---------- product detail ---------- */
+const pdpState = { classic:{colour:'black', qty:1}, pro:{colour:'black', qty:1} };
+
+function pagePDP(pid){
+  const p = PRODUCTS[pid], st = pdpState[pid];
+  return `
+  <div class="page">
+    <div class="wrap">
+      <div class="pdp">
+        <div class="pdp-img" id="pdp-img">${dockSVG(st.colour,{pro:p.soon && pid==='pro', uid:'pdp'})}</div>
+        <div class="pdp-info">
+          <span class="crumb"><a href="#/">Home</a> / Shop / ${p.name}</span>
+          <span class="pill ${p.soon?'pill-soon':'pill-stock'}">${p.soon?'Coming soon — pre-order':'In stock'}</span>
+          <h1>${p.name}</h1>
+          <div class="pdp-price">${money(p.price)}<small>free of drills, screws &amp; regret</small></div>
+          <p class="pdp-desc">${p.blurb}</p>
+
+          <span class="opt-label">Finish — <b id="finish-label" style="color:var(--ink)">${FINISH[st.colour].label}</b></span>
+          <div class="swatches" id="swatches">${swatchHTML(st.colour)}</div>
+
+          <span class="opt-label">Quantity</span>
+          <div class="qty-row">
+            <div class="qty">
+              <button id="qty-minus" aria-label="Decrease">−</button>
+              <span id="qty-val">${st.qty}</span>
+              <button id="qty-plus" aria-label="Increase">+</button>
+            </div>
+          </div>
+
+          <div class="pdp-cta-row">
+            <button class="btn btn-primary" id="add-btn">${p.soon ? 'Pre-order — ' : 'Add to cart — '}<span id="add-price">${money(p.price*st.qty)}</span></button>
+            <a class="btn btn-ghost" href="#/${pid==='classic'?'pro':'classic'}">${pid==='classic'?'See the Pro →':'See the Classic →'}</a>
+          </div>
+          ${p.soon ? `<p style="font-size:13.5px;color:var(--ink-3);margin:-20px 0 30px">Pre-orders are charged when the Pro ships. We'll email you the moment it's ready.</p>` : ''}
+
+          <div class="spec-list">
+            ${p.specs.map(([k,v])=>`<dl><dt>${k}</dt><dd>${v}</dd></dl>`).join('')}
+          </div>
+        </div>
+      </div>
+
+      <div class="feat-strip">
+        <div class="feat"><h4>📺 Made for watching</h4><p>Hang your phone at eye level, rotate to landscape, and watch TV, sports or tutorials hands-free.</p></div>
+        <div class="feat"><h4>🏠 Landlord-friendly</h4><p>Suction means no holes, no residue, no awkward deposit conversations.</p></div>
+        <div class="feat"><h4>🇬🇧 Printed in-house</h4><p>Designed and 3D-printed by us in the UK, checked by hand before it ships.</p></div>
+      </div>
+    </div>
+  </div>`;
+}
+
+function wirePDP(pid){
+  const p = PRODUCTS[pid], st = pdpState[pid];
+  const refresh = () => {
+    document.getElementById('pdp-img').innerHTML = dockSVG(st.colour,{pro:p.soon && pid==='pro', uid:'pdp'});
+    document.getElementById('finish-label').textContent = FINISH[st.colour].label;
+    document.getElementById('qty-val').textContent = st.qty;
+    document.getElementById('add-price').textContent = money(p.price*st.qty);
+    document.querySelectorAll('#swatches .swatch').forEach(b=>b.classList.toggle('sel', b.dataset.colour===st.colour));
+  };
+  document.querySelectorAll('#swatches .swatch').forEach(b=>b.addEventListener('click',()=>{ st.colour=b.dataset.colour; refresh(); }));
+  document.getElementById('qty-minus').addEventListener('click',()=>{ st.qty=Math.max(1,st.qty-1); refresh(); });
+  document.getElementById('qty-plus').addEventListener('click',()=>{ st.qty=Math.min(9,st.qty+1); refresh(); });
+  document.getElementById('add-btn').addEventListener('click',()=>{ addToCart(pid, st.colour, st.qty); st.qty=1; refresh(); });
+}
+
+/* ---------- how it works ---------- */
+function pageHow(){
+  return `
+  <div class="page">
+    <div class="wrap">
+      <div class="hiw-hero">
+        <span class="eyebrow">How it works</span>
+        <h1>Three seconds from box<br>to on the wall.</h1>
+        <p>No drill, no adhesive strips, no instructions you'll actually need. Here's how any wall becomes the best seat in the house.</p>
+      </div>
+
+      <div class="hiw-detail">
+        <div class="hiw-visual">${dockSVG('grey',{uid:'hw1'})}</div>
+        <div class="hiw-txt">
+          <span class="eyebrow">Step 01 — Stick</span>
+          <h3>Suction that actually holds.</h3>
+          <p>Press the base onto any smooth wall and flick the locking lever. The suction cup pulls a vacuum seal that grips through knocks and grabs — but peels off clean whenever you want to move it. Tiles, mirrors, glass, gloss paint, wardrobe doors, fridge doors: if it's smooth and vertical, it's a dock now.</p>
+        </div>
+      </div>
+
+      <div class="hiw-detail">
+        <div class="hiw-visual">${dockSVG('black',{phone:true, uid:'hw2'})}</div>
+        <div class="hiw-txt">
+          <span class="eyebrow">Step 02 — Snap</span>
+          <h3>Magnets do the aiming.</h3>
+          <p>The MagSafe-compatible ring pulls your phone into perfect alignment the moment it gets close. Works with iPhone 12 and later out of the box, and with any Samsung or Android phone wearing a magnetic case or ring. One hand, half a second, zero fiddling.</p>
+        </div>
+      </div>
+
+      <div class="hiw-detail">
+        <div class="hiw-visual">${dockSVG('white',{pro:true, uid:'hw3'})}</div>
+        <div class="hiw-txt">
+          <span class="eyebrow">Step 03 — Sit back</span>
+          <h3>Any wall is the best seat in the house.</h3>
+          <p>Recipes at eye level while you cook. The match on while you're in the bath. A workout tutorial at the gym mirror. An episode in bed without holding your arm up. And with the upcoming <a href="#/pro" style="color:var(--accent)">Dockz Pro</a>, hanging your phone and charging it become the same motion.</p>
+        </div>
+      </div>
+
+      <section class="section" style="padding-top:60px">
+        <div class="section-head">
+          <span class="eyebrow">FAQ</span>
+          <h2>Quick answers.</h2>
+        </div>
+        <div class="faq">
+          <details class="faq-item"><summary>Will it work with my phone?</summary><p>Any iPhone from the 12 onwards works natively with MagSafe. Samsung and other Android phones work brilliantly with a magnetic case or a stick-on magnetic ring (widely available for a few pounds).</p></details>
+          <details class="faq-item"><summary>Which walls does it stick to?</summary><p>Anything smooth and non-porous: tiles, glass, mirrors, gloss paint, laminate, painted metal, fridge doors. It won't hold on textured wallpaper, brick or matte-painted plaster.</p></details>
+          <details class="faq-item"><summary>Does it leave marks on the wall?</summary><p>No. Suction means no adhesive at all — release the lever and it lifts off leaving nothing behind. Rent-proof, deposit-safe.</p></details>
+          <details class="faq-item"><summary>Can I watch in landscape?</summary><p>Yes — the magnetic ring holds your phone in portrait or landscape, and you can rotate it right there on the wall. Tap, scroll and take calls while it's mounted, then pull it off when you're done.</p></details>
+          <details class="faq-item"><summary>When does Dockz Pro ship?</summary><p>The Pro's charging system is in final testing. Pre-order now and you'll only be charged when it ships — or <a href="#/contact" style="color:var(--accent)">drop us a line</a> and we'll email you at launch.</p></details>
+        </div>
+      </section>
+    </div>
+    ${ctaBand}
+  </div>`;
+}
+
+/* ---------- contact ---------- */
+function pageContact(){
+  return `
+  <div class="page">
+    <div class="wrap">
+      <div class="hiw-hero" style="padding-bottom:0">
+        <span class="eyebrow">Contact</span>
+        <h1>Talk to us.</h1>
+        <p>Question about an order, a wall you're not sure about, or an idea for a dock we should print next? We read everything.</p>
+      </div>
+      <div class="contact-grid">
+        <div class="contact-card">
+          <h3>Send a message</h3>
+          <p>This opens your email app with everything filled in — straight to our inbox.</p>
+          <form id="contact-form">
+            <div class="field"><label for="cf-name">Your name</label><input id="cf-name" type="text" placeholder="Sam Smith" required></div>
+            <div class="field"><label for="cf-topic">Topic</label>
+              <select id="cf-topic">
+                <option>General question</option>
+                <option>Order help</option>
+                <option>Dockz Pro launch updates</option>
+                <option>Wholesale / stockists</option>
+                <option>Something else</option>
+              </select>
+            </div>
+            <div class="field"><label for="cf-msg">Message</label><textarea id="cf-msg" placeholder="Tell us what's on your mind…" required></textarea></div>
+            <button class="btn btn-primary" type="submit" style="width:100%">Send email</button>
+          </form>
+        </div>
+        <div>
+          <div class="contact-card" style="margin-bottom:20px">
+            <h3>Direct</h3>
+            <p>Prefer to just email? Go for it.</p>
+            <div class="contact-line">✉️ <b><a href="mailto:dockzofficial@gmail.com" style="color:var(--accent)">dockzofficial@gmail.com</a></b></div>
+            <div class="contact-line">🕐 <span>We usually reply within one working day.</span></div>
+            <div class="contact-line">📍 <span>Designed &amp; printed in-house, UK.</span></div>
+          </div>
+          <div class="contact-card">
+            <h3>Also on Etsy</h3>
+            <p>You can find Dockz on Etsy too — same docks, same in-house printing.</p>
+            <a href="https://www.etsy.com" target="_blank" rel="noopener" class="btn btn-ghost btn-sm">Visit our Etsy shop</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+function wireContact(){
+  document.getElementById('contact-form').addEventListener('submit', e=>{
+    e.preventDefault();
+    const name = document.getElementById('cf-name').value.trim();
+    const topic = document.getElementById('cf-topic').value;
+    const msg = document.getElementById('cf-msg').value.trim();
+    const subject = encodeURIComponent(`[Dockz] ${topic} — ${name}`);
+    const body = encodeURIComponent(`${msg}\n\n— ${name}`);
+    window.location.href = `mailto:dockzofficial@gmail.com?subject=${subject}&body=${body}`;
+    toast('Opening your email app…');
+  });
+}
+
+/* ---------- cart page ---------- */
+function pageCart(){ return `<div class="page"><div class="cart-page" id="cart-body"></div></div>`; }
+
+function renderCartPage(){
+  const el = document.getElementById('cart-body');
+  if (!el) return;
+  if (cart.length === 0){
+    el.innerHTML = `
+      <span class="eyebrow">Your cart</span>
+      <h1>Cart</h1>
+      <div class="cart-empty">
+        <div class="big">🧲</div>
+        <h3 style="font-size:22px;margin-bottom:8px">Nothing snapped in yet.</h3>
+        <p>Your cart is empty — let's fix that.</p>
+        <a href="#/classic" class="btn btn-primary">Shop Dockz Classic</a>
+      </div>`;
+    return;
+  }
+  const rows = cart.map((line,i)=>{
+    const p = PRODUCTS[line.id];
+    return `
+    <div class="cart-item">
+      <div class="cart-item-img">${dockSVG(line.colour,{pro:p.soon, uid:'ci'+i})}</div>
+      <div>
+        <h4>${p.name}${p.soon?' <span class="pill pill-soon" style="margin-left:6px">Pre-order</span>':''}</h4>
+        <div class="meta">${FINISH[line.colour].label} · ${money(p.price)} each</div>
+      </div>
+      <div class="cart-item-right">
+        <div class="qty">
+          <button data-act="minus" data-i="${i}" aria-label="Decrease">−</button>
+          <span>${line.qty}</span>
+          <button data-act="plus" data-i="${i}" aria-label="Increase">+</button>
+        </div>
+        <span class="line-price">${money(p.price*line.qty)}</span>
+        <button class="remove-btn" data-act="rm" data-i="${i}">Remove</button>
+      </div>
+    </div>`;
+  }).join('');
+  el.innerHTML = `
+    <span class="eyebrow">Your cart</span>
+    <h1>Cart <span style="color:var(--ink-3);font-size:.55em;font-weight:500">(${cartCount()} item${cartCount()!==1?'s':''})</span></h1>
+    ${rows}
+    <div class="cart-summary">
+      <div class="sum-row"><span>Subtotal</span><span>${money(cartTotal())}</span></div>
+      <div class="sum-row"><span>Shipping</span><span>Calculated at checkout</span></div>
+      <div class="sum-row total"><span>Total</span><span>${money(cartTotal())}</span></div>
+      <div style="display:flex;gap:12px;margin-top:22px;flex-wrap:wrap">
+        <a href="#/checkout" class="btn btn-primary" style="flex:1;min-width:180px">Checkout →</a>
+        <a href="#/classic" class="btn btn-ghost" style="flex:1;min-width:180px">Keep shopping</a>
+      </div>
+    </div>`;
+  el.querySelectorAll('[data-act]').forEach(b=>{
+    const i = +b.dataset.i;
+    b.addEventListener('click', ()=>{
+      if (b.dataset.act==='minus') setQty(i,-1);
+      else if (b.dataset.act==='plus') setQty(i,1);
+      else removeLine(i);
+    });
+  });
+}
+
+/* ---------- checkout (Stripe) ---------- */
+function pageCheckout(){
+  if (cart.length===0) return pageCart();
+  const lines = cart.map(l=>{
+    const p = PRODUCTS[l.id];
+    return `<div class="sum-row"><span>${p.name} · ${FINISH[l.colour].label} × ${l.qty}${p.soon?' (pre-order)':''}</span><span>${money(p.price*l.qty)}</span></div>`;
+  }).join('');
+  return `
+  <div class="page">
+    <div class="cart-page" style="max-width:640px">
+      <span class="eyebrow">Checkout</span>
+      <h1>Almost there.</h1>
+      <div class="cart-summary" style="margin-top:0">
+        <h3 style="font-family:var(--font-d);font-size:18px;margin-bottom:14px">Order summary</h3>
+        ${lines}
+        <div class="sum-row"><span>Shipping</span><span>Chosen at payment</span></div>
+        <div class="sum-row total"><span>Total</span><span>${money(cartTotal())} + shipping</span></div>
+        <button class="btn btn-primary" id="pay-btn" style="width:100%;margin-top:20px">Pay securely →</button>
+        <p id="pay-error" style="display:none;color:#ff8a8a;font-size:14px;margin:12px 0 0"></p>
+        <p style="color:var(--ink-3);font-size:13px;margin:14px 0 0;line-height:1.5">
+          You'll be taken to <b>Stripe</b>, our payment provider, to enter your delivery
+          address and pay — card, Apple&nbsp;Pay or Google&nbsp;Pay. We never see your card details.
+          Ships to the UK &amp; Europe. Free UK shipping over £40.
+        </p>
+        <a href="#/cart" style="display:inline-block;margin-top:16px;font-size:14px;color:var(--ink-3);text-decoration:underline">← Back to cart</a>
+      </div>
+    </div>
+  </div>`;
+}
+function wireCheckout(){
+  const btn = document.getElementById('pay-btn');
+  if (!btn) return;
+  btn.addEventListener('click', async ()=>{
+    btn.disabled = true;
+    const label = btn.textContent;
+    btn.textContent = 'Opening secure checkout…';
+    const errEl = document.getElementById('pay-error');
+    errEl.style.display = 'none';
+    try {
+      const res = await fetch('/api/create-checkout-session', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ items: cart.map(l => ({ id: l.id, colour: l.colour, qty: l.qty })) }),
+      });
+      const data = await res.json().catch(()=> ({}));
+      if (!res.ok || !data.url) throw new Error(data.error || 'Checkout is unavailable right now.');
+      window.location.href = data.url; // → Stripe-hosted payment page
+    } catch (e) {
+      errEl.textContent = e.message === 'Failed to fetch'
+        ? 'Could not reach checkout — check your connection and try again.'
+        : e.message;
+      errEl.style.display = 'block';
+      btn.disabled = false;
+      btn.textContent = label;
+    }
+  });
+}
+
+/* ---------- order success (Stripe return) ---------- */
+function pageSuccess(){
+  cart = []; saveCart(); syncBadge();
+  return `
+  <div class="page">
+    <div class="cart-page" style="max-width:640px;text-align:center">
+      <div style="font-size:56px;margin:30px 0 6px">🎉</div>
+      <span class="eyebrow">Order confirmed</span>
+      <h1>You're all docked in.</h1>
+      <p style="color:var(--ink-2);max-width:440px;margin:0 auto 12px;line-height:1.6">
+        Thanks for your order! A receipt from Stripe is on its way to your inbox,
+        and we'll email you again when your Dockz ships.
+      </p>
+      <p style="color:var(--ink-3);font-size:14px;margin-bottom:30px">
+        Questions about your order? <a href="#/contact" style="color:var(--accent);text-decoration:underline">Get in touch</a>.
+      </p>
+      <a href="#/" class="btn btn-primary">Back to Dockz</a>
+    </div>
+  </div>`;
+}
+
+/* ---------- router ---------- */
+const app = document.getElementById('app');
+function router(){
+  const route = (location.hash.replace(/^#\/?/, '') || 'home').split('?')[0];
+  let html, after = null, navKey = route;
+  switch(route){
+    case 'home':     html = pageHome(); break;
+    case 'classic':  html = pagePDP('classic'); after = ()=>wirePDP('classic'); break;
+    case 'pro':      html = pagePDP('pro');     after = ()=>wirePDP('pro'); break;
+    case 'how':      html = pageHow(); break;
+    case 'contact':  html = pageContact(); after = wireContact; break;
+    case 'cart':     html = pageCart(); after = renderCartPage; break;
+    case 'checkout': html = pageCheckout(); after = ()=>{ wireCheckout(); renderCartPage(); }; break;
+    case 'success':  html = pageSuccess(); break;
+    default:         html = pageHome(); navKey = 'home';
+  }
+  app.innerHTML = html;
+  if (after) after();
+  document.querySelectorAll('[data-nav]').forEach(a=>a.classList.toggle('active', a.dataset.nav===navKey));
+  document.getElementById('nav-links').classList.remove('open');
+  window.scrollTo(0,0);
+}
+window.addEventListener('hashchange', router);
+document.getElementById('burger').addEventListener('click', ()=>document.getElementById('nav-links').classList.toggle('open'));
+router();
+syncBadge();
+</script>
+</body>
+</html>
