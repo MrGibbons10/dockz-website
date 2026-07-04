@@ -390,6 +390,36 @@
   .foot-grid li a:hover{color:var(--ink)}
   .foot-base{border-top:1px solid var(--line);padding-top:24px;display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;font-size:13px;color:var(--ink-3)}
   @media(max-width:820px){.foot-grid{grid-template-columns:1fr 1fr}}
+
+  /* ---------- signup popup ---------- */
+  .popup-overlay{
+    position:fixed;inset:0;z-index:200;background:rgba(6,6,9,.72);backdrop-filter:blur(4px);
+    display:flex;align-items:center;justify-content:center;padding:20px;
+    opacity:0;pointer-events:none;transition:opacity .3s;
+  }
+  .popup-overlay.show{opacity:1;pointer-events:auto}
+  .popup{
+    position:relative;max-width:420px;width:100%;background:var(--bg-2);
+    border:1px solid var(--line-2);border-radius:var(--radius);padding:36px 30px 30px;
+    transform:translateY(14px) scale(.97);transition:transform .3s;
+  }
+  .popup-overlay.show .popup{transform:none}
+  .popup h3{font-family:var(--font-d);font-size:24px;line-height:1.25;margin:0 0 10px}
+  .popup h3 em{font-style:normal;color:var(--accent)}
+  .popup p{color:var(--ink-2);font-size:14.5px;line-height:1.6;margin:0 0 20px}
+  .popup .field input{width:100%}
+  .popup-close{
+    position:absolute;top:14px;right:14px;width:32px;height:32px;border-radius:50%;
+    background:var(--bg-3);border:1px solid var(--line);color:var(--ink-2);
+    font-size:16px;line-height:1;cursor:pointer;transition:all .2s;
+  }
+  .popup-close:hover{color:var(--ink);border-color:var(--line-2)}
+  .popup .btn{width:100%;margin-top:12px}
+  .popup .fine{font-size:12px;color:var(--ink-3);margin:12px 0 0;text-align:center}
+  .popup .pop-error{display:none;color:#ff8a8a;font-size:13px;margin:10px 0 0}
+  .popup .pop-hp{position:absolute;left:-5000px;opacity:0;height:0;overflow:hidden}
+  .popup-success{text-align:center;padding:10px 0 4px}
+  .popup-success .big{font-size:44px;margin-bottom:12px}
 </style>
 </head>
 <body>
@@ -1122,6 +1152,79 @@ function pageSuccess(){
     </div>
   </div>`;
 }
+
+/* ---------- signup popup (10% off) ---------- */
+function initPopup(){
+  if (localStorage.getItem('dockz-popup-done')) return;
+
+  const overlay = document.createElement('div');
+  overlay.className = 'popup-overlay';
+  overlay.innerHTML = `
+    <div class="popup" role="dialog" aria-modal="true" aria-label="Get 10% off">
+      <button class="popup-close" aria-label="Close">✕</button>
+      <div class="pop-form">
+        <h3>Get <em>10% off</em> your first Dockz.</h3>
+        <p>Join the list and we'll email you a welcome code — plus first dibs when the Dockz&nbsp;Pro drops.</p>
+        <form id="pop-signup" novalidate>
+          <input class="pop-hp" type="text" name="website" tabindex="-1" autocomplete="off">
+          <div class="field"><input type="email" id="pop-email" placeholder="you@example.com" autocomplete="email" required></div>
+          <button class="btn btn-primary" type="submit">Send my 10% code →</button>
+          <p class="pop-error" id="pop-error"></p>
+          <p class="fine">No spam — just your code and the occasional drop. Unsubscribe any time.</p>
+        </form>
+      </div>
+      <div class="popup-success" style="display:none">
+        <div class="big">📬</div>
+        <h3>Check your inbox!</h3>
+        <p>Your 10% code is on its way to <b id="pop-sent-to" style="color:var(--ink)"></b>.<br>(Give it a minute, and peek in spam just in case.)</p>
+        <button class="btn btn-primary" id="pop-done">Start browsing →</button>
+      </div>
+    </div>`;
+  document.body.appendChild(overlay);
+
+  const dismiss = () => {
+    overlay.classList.remove('show');
+    localStorage.setItem('dockz-popup-done', '1');
+    setTimeout(()=>overlay.remove(), 350);
+  };
+  overlay.addEventListener('click', e => { if (e.target === overlay) dismiss(); });
+  overlay.querySelector('.popup-close').addEventListener('click', dismiss);
+
+  overlay.querySelector('#pop-signup').addEventListener('submit', async e => {
+    e.preventDefault();
+    const emailEl = overlay.querySelector('#pop-email');
+    const errEl = overlay.querySelector('#pop-error');
+    const btn = e.target.querySelector('button[type=submit]');
+    const email = emailEl.value.trim();
+    errEl.style.display = 'none';
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)){
+      errEl.textContent = 'That email doesn’t look right — mind checking it?';
+      errEl.style.display = 'block';
+      return;
+    }
+    btn.disabled = true; btn.textContent = 'Sending…';
+    try {
+      const res = await fetch('/api/subscribe', {
+        method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({ email, website: e.target.website.value }),
+      });
+      const data = await res.json().catch(()=> ({}));
+      if (!res.ok) throw new Error(data.error || 'Something went wrong — please try again.');
+      overlay.querySelector('.pop-form').style.display = 'none';
+      overlay.querySelector('#pop-sent-to').textContent = email;
+      overlay.querySelector('.popup-success').style.display = 'block';
+      localStorage.setItem('dockz-popup-done', '1');
+    } catch (err) {
+      errEl.textContent = err.message === 'Failed to fetch' ? 'Could not connect — check your internet and try again.' : err.message;
+      errEl.style.display = 'block';
+      btn.disabled = false; btn.textContent = 'Send my 10% code →';
+    }
+  });
+  overlay.querySelector('#pop-done').addEventListener('click', dismiss);
+
+  setTimeout(()=>overlay.classList.add('show'), 2500);
+}
+initPopup();
 
 /* ---------- router ---------- */
 const app = document.getElementById('app');
