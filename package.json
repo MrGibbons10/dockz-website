@@ -1,0 +1,7 @@
+{
+  "name": "dockz",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Dockz storefront — static site + Stripe Checkout via Vercel Functions (no dependencies)"
+}
